@@ -7,6 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
+from email.mime.text import MIMEText
 import io
 import os
 from config import * 
@@ -133,7 +134,7 @@ def create_calendar_image(year, month, reservations):
     img.save(img_byte_arr, format="JPEG")
     return img_byte_arr.getvalue()
 
-def send_email_with_calendar(image_data, year, month, email=RECIPIENT_EMAIL):
+def send_email_with_calendar_attached(image_data, year, month, email):
     msg = MIMEMultipart()
     msg["From"] = SENDER_EMAIL
     msg["To"] = email 
@@ -141,6 +142,38 @@ def send_email_with_calendar(image_data, year, month, email=RECIPIENT_EMAIL):
     
     # Attach image
     image = MIMEImage(image_data, name=f"calendar_{year}_{month}.jpg")
+    msg.attach(image)
+    
+    # Send email
+    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
+        server.sendmail(SENDER_EMAIL, RECIPIENT_EMAIL, msg.as_string())
+
+def send_email_with_calendar_inline(image_data, year, month, email):
+    # Create a multipart message
+    msg = MIMEMultipart()
+    msg["From"] = SENDER_EMAIL
+    msg["To"] = email
+    msg["Subject"] = f"Calendar for {calendar.month_name[month]} {year}"
+    
+    # Define the HTML body with an inline image
+    html = """\
+    <html>
+      <body>
+        <p>Here is the calendar for {month} {year}:</p>
+        <img src="cid:calendar_image" alt="Calendar" style="max-width: 100%; height: auto;">
+      </body>
+    </html>
+    """.format(month=calendar.month_name[month], year=year)
+    
+    # Add HTML part
+    msg.attach(MIMEText(html, 'html'))
+    
+    # Add image as inline content
+    image = MIMEImage(image_data, name=f"calendar_{year}_{month}.jpg")
+    image.add_header('Content-ID', '<calendar_image>')
+    image.add_header('Content-Disposition', 'inline', filename=f"calendar_{year}_{month}.jpg")
     msg.attach(image)
     
     # Send email
@@ -184,9 +217,19 @@ def main():
     
     # Create calendar image
     calendar_image = create_calendar_image(year, month, reservations)
+ 
+    # Drop calendar image to local dir 
+    try: 
+        with open(f"vrbo_calendar_{year}-%02d.jpg" % month, "wb") as outfh: 
+           outfh.write(calendar_image)
+    except Exception as e:
+        print("cannot write image file to local dir")
+        print(e)
+        
     
     # Send email with calendar
-    send_email_with_calendar(calendar_image, year, month, email)
+    send_email_with_calendar_inline(calendar_image, year, month, email)
+    #send_email_with_calendar_attached(calendar_image, year, month, email)
     print(f"Calendar for {calendar.month_name[month]} {year} has been emailed.")
 
 if __name__ == "__main__":
