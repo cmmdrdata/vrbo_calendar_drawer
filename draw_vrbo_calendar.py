@@ -11,13 +11,13 @@ import io
 import os
 from config import * 
 
+# The following constants should be defined in your config.py file
 # URL for the iCalendar
-ICAL_URL = "http://www.vrbo.com/icalendar/665c292bce1b41c7b1180a35222059f1.ics?nonTentative"
+# ICAL_URL = "http://www.vrbo.com/icalendar/665c292bce1b41c7b1180a35222059f1.ics?nonTentative"
 
 # Email configuration (replace with your details)
 #SMTP_SERVER = "smtp.gmail.com"
 #SMTP_PORT = 587
-
 
 #SENDER_EMAIL = "your email"
 #SENDER_PASSWORD = "your password"
