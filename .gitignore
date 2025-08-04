@@ -1,4 +1,5 @@
 config.py
 bin
 lib
+pyvenv.cfg
 __pycache__
