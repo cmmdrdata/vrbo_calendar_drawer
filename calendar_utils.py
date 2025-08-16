@@ -71,12 +71,13 @@ def create_calendar_image(year, month, reservations):
     
     # Try to use a default font, fall back to basic if not available
     try:
-        font = ImageFont.truetype("arial.ttf", 16)
-        bold_font = ImageFont.truetype("arial.tf", 20)  # Bold font for headers and names
+        font = ImageFont.truetype("DejaVuSans.ttf", 10)
+        bold_font = ImageFont.truetype("DejaVuSans.ttf", 20)  # Bold font for headers and names
+        days_font = ImageFont.truetype("DejaVuSans.ttf", 16)  # Bold font for headers and names
     except:
         font = ImageFont.load_default()
-        bold_font = ImageFont.load_default(20)
-        days_font = ImageFont.load_default(16)
+        bold_font = font
+        days_font = font
     
     # Draw month and year
     draw.text((10, 10), f"{month_name} {year}", fill="black", font=bold_font)
