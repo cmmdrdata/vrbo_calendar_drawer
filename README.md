@@ -12,3 +12,4 @@ create a config.py with all the needed constants
 
 run the script 
 
+<img src="examples/vrbo_calendar_Jul_2026.png" alt="example calendar view for Jul 2026" width="500">
