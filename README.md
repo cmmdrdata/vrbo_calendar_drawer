@@ -9,7 +9,7 @@ install requirements file from requirements.txt <br>
   pip install -r requirements.txt
 
 create a config.py with all the needed constants 
-   ICAL_URL="https://www.vrbo.com/icalendar/665c292bce1b41c7b1180a35222059f1.ics?nonTentative"
+   ICAL_URL="https://www.vrbo.com/icalendar/xxxxxxx.ics?nonTentative"
    SMTP_SERVER = "smtp.gmail.com"
    SMTP_PORT = 587
    SENDER_EMAIL = "someone@gmail.com"
