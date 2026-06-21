@@ -9,7 +9,27 @@ install requirements file from requirements.txt <br>
   pip install -r requirements.txt
 
 create a config.py with all the needed constants 
+   ICAL_URL="https://www.vrbo.com/icalendar/665c292bce1b41c7b1180a35222059f1.ics?nonTentative"
+   SMTP_SERVER = "smtp.gmail.com"
+   SMTP_PORT = 587
+   SENDER_EMAIL = "someone@gmail.com"
+   RECIPIENT_EMAIL = "someone@outlook.com"
+   SENDER_PASSWORD = ""
+
 
 run the script 
+./venv/bin/activate
+usage: compare_vrbo_calendar.py [-h] [--month {1,2,3,4,5,6,7,8,9,10,11,12}] [--email EMAIL] [--nextmonth] [--year YEAR]
+
+Generate and email a calendar for a specified month.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --month {1,2,3,4,5,6,7,8,9,10,11,12}
+                        Month number (1-12)
+  --email EMAIL         recipient email
+  --nextmonth           Process the upcoming month's data window
+  --year YEAR           Year (e.g., 2025)
+
 
 <img src="examples/vrbo_calendar_Jul_2026.png" alt="example calendar view for Jul 2026" width="500">
