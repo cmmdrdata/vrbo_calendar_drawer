@@ -135,22 +135,6 @@ def create_calendar_image(year, month, reservations):
     img.save(img_byte_arr, format="JPEG")
     return img_byte_arr.getvalue()
 
-def send_email_with_calendar_attached(image_data, year, month, email):
-    msg = MIMEMultipart()
-    msg["From"] = SENDER_EMAIL
-    msg["To"] = email 
-    msg["Subject"] = f"4202 Calendar for {calendar.month_name[month]} {year}"
-    
-    # Attach image
-    image = MIMEImage(image_data, name=f"calendar_{year}_{month}.jpg")
-    msg.attach(image)
-    
-    # Send email
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()
-        server.login(SENDER_EMAIL, SENDER_PASSWORD)
-        server.sendmail(SENDER_EMAIL, RECIPIENT_EMAIL, msg.as_string())
-
 def send_email_with_calendar_inline(image_data, year, month, email):
     # Create a multipart message
     msg = MIMEMultipart()

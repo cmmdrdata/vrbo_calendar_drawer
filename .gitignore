@@ -5,3 +5,6 @@ pyvenv.cfg
 __pycache__
 *jpg
 *json
+*png
+*log
+venv

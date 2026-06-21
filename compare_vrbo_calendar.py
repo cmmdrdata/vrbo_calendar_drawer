@@ -1,37 +1,18 @@
 from calendar_utils import * 
 from config import * 
+from calendar_drawer import generate_ui_calendar
+from send_updated_calendar import * 
 import json
 
 # The following constants should be defined in your config.py file
 # URL for the iCalendar
 # ICAL_URL = "http://www.vrbo.com/icalendar/yourkey"
 
-def compare():
+def compare(month, year):
     # Set up argument parser
-    parser = argparse.ArgumentParser(description="Generate and email a calendar for a specified month.")
-    parser.add_argument("--month", type=int, choices=range(1, 13), help="Month number (1-12)")
-    parser.add_argument("--nextmonth", type=bool, help="")
-    parser.add_argument("--email", help="recipient email")
-    parser.add_argument("--year", type=int, help="Year (e.g., 2025)")
-    args = parser.parse_args()
-
-    # Get current date if no arguments provided
-    today = datetime.now()
-    year = args.year if args.year else today.year
-    month = args.month if args.month else today.month
-    if args.nextmonth:
-      month = month +1
-      if month == 13: 
-         month = 1
 
     if args.email != "":
        email = args.email
-
-
-    # Validate month
-    if month < 1 or month > 12:
-        print("Month must be between 1 and 12.")
-        return
 
     # Fetch and parse iCalendar data
     cal = fetch_ical_data(ICAL_URL)
@@ -46,11 +27,11 @@ def compare():
      
     
     # Create calendar image
-    calendar_image = create_calendar_image(year, month, reservations)
+    filename = generate_ui_calendar(year, month, reservations)
     reserv = {}
     send_cal = True 
     try: 
-        with open(f"vrbo_calendar_{year}-%02d.json" % month, "r") as infh: 
+        with open(filename, "r") as infh: 
             reserv = json.loads(infh.read())
             print(reserv)
         if reserv == rr:
@@ -60,7 +41,7 @@ def compare():
            print(f"last read reservations for {calendar.month_name[month]} differs from vrbo")
 
     except Exception as e: 
-        print("cannot find reservations file in local dir")
+        print("cannot find reservations json file in local dir")
         print(e)
         send_cal = True 
 
@@ -69,11 +50,11 @@ def compare():
         with open(f"vrbo_calendar_{year}-%02d.json" % month, "w") as outfh: 
            outfh.write(json.dumps(reservations))
     except Exception as e:
-        print("cannot write reservations file to local dir")
+        print("cannot write reservations json file to local dir")
         print(e)
         
     # Send email with calendar
-    send_email_with_calendar_inline(calendar_image, year, month, email)
+    send_inline_notification_email(filename, calendar.month_name[month])
     #send_email_with_calendar_attached(calendar_image, year, month, email)
 #   print(f"Calendar for {calendar.month_name[month]} {year} has been emailed.")
 
@@ -81,8 +62,8 @@ if __name__ == "__main__":
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Generate and email a calendar for a specified month.")
     parser.add_argument("--month", type=int, choices=range(1, 13), help="Month number (1-12)")
-    parser.add_argument("--nextmonth", type=bool, help="")
     parser.add_argument("--email", help="recipient email")
+    parser.add_argument("--nextmonth", action="store_true", help="Process the upcoming month's data window")
     parser.add_argument("--year", type=int, help="Year (e.g., 2025)")
     args = parser.parse_args()
 
@@ -94,7 +75,7 @@ if __name__ == "__main__":
       month = month +1
       if month == 13:
          month = 1
-
+         year += 1
     if args.email != "":
        email = args.email
 
@@ -104,4 +85,4 @@ if __name__ == "__main__":
         print("Month must be between 1 and 12.")
         exit() 
 
-    compare()
+    compare(month, year)
