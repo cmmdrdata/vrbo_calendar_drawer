@@ -36,8 +36,9 @@ optional arguments: <br>
   --year YEAR           Year (e.g., 2025)<br>
 
 # example cron 
-  
+#hourly download the calendar and send updated calendar
 20 8-18 * * * cd /home/vrbo/vrbo_calendar_drawer && source venv/bin/activate && python compare_vrbo_calendar.py  > /home/vrbo/vrbo_calendar_drawer/cron.output.log 2>&1 <br>
+#starting on the 20th of the month,  generate the next months calendar and send updates hourly if there are updates
 20 8-18 20-31 * * cd /home/vrbo/vrbo_calendar_drawer && source venv/bin/activate && python compare_vrbo_calendar.py --nextmonth > /home/vrbo/vrbo_calendar_drawer/cron.output1.log 2>&1
 
 
